@@ -14,17 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * @作者 江南一点雨
- * @公众号 江南一点雨
- * @微信号 a_java_boy
- * @GitHub https://github.com/lenve
- * @博客 http://wangsong.blog.csdn.net
- * @网站 http://www.javaboy.org
- * @时间 2019-09-27 7:13
- */
+// 一个类中可能会有多个缓存操作，而这些缓存操作可能是重复的。这个时候可以使用@CacheConfig
+// @CacheConfig是一个类级别的注解，允许共享缓存的名称、KeyGenerator、CacheManager 和CacheResolver。
 @Service
-@CacheConfig(cacheNames = "menus_cache")
+//@CacheConfig(cacheNames = "menus_cache")
 public class MenuService {
     @Autowired
     MenuMapper menuMapper;
@@ -34,7 +27,7 @@ public class MenuService {
         return menuMapper.getMenusByHrId(((Hr) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId());
     }
 
-    @Cacheable
+//    @Cacheable
     public List<Menu> getAllMenusWithRole() {
         return menuMapper.getAllMenusWithRole();
     }

@@ -18,8 +18,8 @@ import java.util.List;
 public class MailSendTask {
     @Autowired
     MailSendLogService mailSendLogService;
-    @Autowired
-    RabbitTemplate rabbitTemplate;
+//    @Autowired
+//    RabbitTemplate rabbitTemplate;
     @Autowired
     EmployeeService employeeService;
     @Scheduled(cron = "0/10 * * * * ?")
@@ -34,7 +34,7 @@ public class MailSendTask {
             }else{
                 mailSendLogService.updateCount(mailSendLog.getMsgId(), new Date());
                 Employee emp = employeeService.getEmployeeById(mailSendLog.getEmpId());
-                rabbitTemplate.convertAndSend(MailConstants.MAIL_EXCHANGE_NAME, MailConstants.MAIL_ROUTING_KEY_NAME, emp, new CorrelationData(mailSendLog.getMsgId()));
+//                rabbitTemplate.convertAndSend(MailConstants.MAIL_EXCHANGE_NAME, MailConstants.MAIL_ROUTING_KEY_NAME, emp, new CorrelationData(mailSendLog.getMsgId()));
             }
         });
     }

@@ -14,6 +14,7 @@ import java.util.List;
 public class ChatController {
     @Autowired
     HrService hrService;
+
     @GetMapping("/hrs")
     public List<Hr> getAllHrs() {
         return hrService.getAllHrsExceptCurrentHr();

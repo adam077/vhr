@@ -29,10 +29,11 @@ import java.util.UUID;
  */
 @Service
 public class EmployeeService {
+
     @Autowired
     EmployeeMapper employeeMapper;
-    @Autowired
-    RabbitTemplate rabbitTemplate;
+//    @Autowired
+//    RabbitTemplate rabbitTemplate;
     @Autowired
     MailSendLogService mailSendLogService;
     public final static Logger logger = LoggerFactory.getLogger(EmployeeService.class);
@@ -70,7 +71,7 @@ public class EmployeeService {
             mailSendLog.setEmpId(emp.getId());
             mailSendLog.setTryTime(new Date(System.currentTimeMillis() + 1000 * 60 * MailConstants.MSG_TIMEOUT));
             mailSendLogService.insert(mailSendLog);
-            rabbitTemplate.convertAndSend(MailConstants.MAIL_EXCHANGE_NAME, MailConstants.MAIL_ROUTING_KEY_NAME, emp, new CorrelationData(msgId));
+//            rabbitTemplate.convertAndSend(MailConstants.MAIL_EXCHANGE_NAME, MailConstants.MAIL_ROUTING_KEY_NAME, emp, new CorrelationData(msgId));
         }
         return result;
     }

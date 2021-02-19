@@ -22,16 +22,19 @@ public class FastDFSUtils {
     private static StorageClient1 client1;
 
     static {
-        try {
-            ClientGlobal.initByProperties("fastdfs-client.properties");
-            TrackerClient trackerClient = new TrackerClient();
-            TrackerServer trackerServer = trackerClient.getConnection();
-            client1 = new StorageClient1(trackerServer, null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (MyException e) {
-            e.printStackTrace();
-        }
+        /*
+        这里是不是相当于init
+         */
+//        try {
+//            ClientGlobal.initByProperties("fastdfs-client.properties"); // 这里注入到了环境，然后初始化client1
+//            TrackerClient trackerClient = new TrackerClient();
+//            TrackerServer trackerServer = trackerClient.getConnection();
+//            client1 = new StorageClient1(trackerServer, null);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (MyException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static String upload(MultipartFile file) {

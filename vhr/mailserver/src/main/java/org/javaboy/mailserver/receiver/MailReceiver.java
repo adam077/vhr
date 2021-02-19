@@ -34,6 +34,12 @@ import java.util.Date;
  */
 @Component
 public class MailReceiver {
+    /*
+    https://blog.csdn.net/yaomingyang/article/details/103741994
+    监听mq中的信息
+    通过redis检查msg是否消费过（为什么不用mq来保证这件事，不是有ack功能吗：难道mq可以被重复消费？还是说避免生产者重复投递？）
+    https://q.cnblogs.com/q/98863/
+     */
 
     public static final Logger logger = LoggerFactory.getLogger(MailReceiver.class);
 
@@ -51,6 +57,8 @@ public class MailReceiver {
         Employee employee = (Employee) message.getPayload();
         MessageHeaders headers = message.getHeaders();
         Long tag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);
+        // 该属性是指退回待确认消息的唯一标识
+        // 这个消息ID主要是用来在发送端记录发送了哪些消息，哪些消息已经成功确认，哪些消息发送失败，需要进一步的处理，如重试等等；
         String msgId = (String) headers.get("spring_returned_message_correlation");
         if (redisTemplate.opsForHash().entries("mail_log").containsKey(msgId)) {
             //redis 中包含该 key，说明该消息已经被消费过
@@ -69,8 +77,7 @@ public class MailReceiver {
             Context context = new Context();
             context.setVariable("name", employee.getName());
             context.setVariable("posName", employee.getPosition().getName());
-            context.setVariable("joblevelName", employee.getJobLevel().getName());
-            context.setVariable("departmentName", employee.getDepartment().getName());
+            // 找到templates中的mail模板，并填充
             String mail = templateEngine.process("mail", context);
             helper.setText(mail, true);
             javaMailSender.send(msg);

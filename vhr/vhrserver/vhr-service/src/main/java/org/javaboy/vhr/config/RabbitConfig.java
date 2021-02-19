@@ -34,6 +34,9 @@ public class RabbitConfig {
                 logger.info(msgId + ":消息发送失败");
             }
         });
+//        rabbitTemplate.setReturnsCallback((msg, repCode, repText, exchange, routingkey) -> {
+//            logger.info("消息发送失败");
+//        });
         rabbitTemplate.setReturnCallback((msg, repCode, repText, exchange, routingkey) -> {
             logger.info("消息发送失败");
         });

@@ -1,6 +1,9 @@
 package org.javaboy.vhr.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import org.javaboy.vhr.model.Hr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -28,6 +31,7 @@ import java.util.Map;
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Autowired
     SessionRegistry sessionRegistry;
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         if (!request.getMethod().equals("POST")) {
@@ -40,9 +44,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             try {
                 loginData = new ObjectMapper().readValue(request.getInputStream(), Map.class);
             } catch (IOException e) {
-            }finally {
+            } finally {
                 String code = loginData.get("code");
-                checkCode(response, code, verify_code);
+                checkCode(code, verify_code);
             }
             String username = loginData.get(getUsernameParameter());
             String password = loginData.get(getPasswordParameter());
@@ -61,14 +65,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             sessionRegistry.registerNewSession(request.getSession(true).getId(), principal);
             return this.getAuthenticationManager().authenticate(authRequest);
         } else {
-            checkCode(response, request.getParameter("code"), verify_code);
+            checkCode(request.getParameter("code"), verify_code);
             return super.attemptAuthentication(request, response);
         }
     }
 
-    public void checkCode(HttpServletResponse resp, String code, String verify_code) {
-        if (code == null || verify_code == null || "".equals(code) || !verify_code.toLowerCase().equals(code.toLowerCase())) {
-            //验证码不正确
+    public void checkCode(String code, String verify_code) {
+        try {
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(code));
+            Preconditions.checkArgument(verify_code != null);
+            Preconditions.checkArgument(verify_code.equalsIgnoreCase(code));
+        } catch (IllegalArgumentException e) {
             throw new AuthenticationServiceException("验证码不正确");
         }
     }
